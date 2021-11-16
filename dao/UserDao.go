@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"database/sql"
 	"log"
 	"monitoraddr/entity"
 )
@@ -54,37 +53,68 @@ func DetailUserDb(id string) entity.USER {
 	return user
 }
 
-func QueryFromDB(db *sql.DB) {
-	rows, err := db.Query("SELECT * FROM user ")
+func QueryFromDB(id string) entity.USER {
+	opend, db := OpenDB()
+	if opend {
+		log.Println("open success")
+	} else {
+		log.Println("open faile:")
+	}
+	rows, err := db.Query("SELECT * FROM user where id=?", id)
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
 	} else {
 	}
+	var user entity.USER
 	for rows.Next() {
-		var id string
-		var name string
-		var code string
-		var pwd string
+		// var id string
+		// var name string
+		// var code string
+		// var pwd string
+		// checkErr(err)
+		// err = rows.Scan(&id, &name, &code, &pwd)
+		// log.Println(id + name + code + pwd)
 		checkErr(err)
-		err = rows.Scan(&id, &name, &code, &pwd)
-		log.Println(id + name + code + pwd)
+		err = rows.Scan(&user.Id, &user.Name, &user.Code, &user.Pwd)
 	}
+	return user
 }
 
-func UpdateDB(db *sql.DB, uid string, name string) {
-	stmt, err := db.Prepare("update user set name=? where id=?")
+func UpdateDB(user entity.USER) int64 {
+	//获取数据库连接
+	opend, db := OpenDB()
+	if opend {
+		log.Println("open success")
+	} else {
+		log.Println("open faile:")
+	}
+	stmt, err := db.Prepare("update user set name=?,code=? where id=?")
 	checkErr(err)
-	res, err := stmt.Exec(name, uid)
+	res, err := stmt.Exec(user.Name, user.Code, user.Id)
+	checkErr(err)
 	affect, err := res.RowsAffected()
+	//获取当前插入记录的id
+	id, err := res.LastInsertId()
 	log.Println("更新数据：", affect)
 	checkErr(err)
+	return id
 }
 
-func DeleteFromDB(db *sql.DB, autid int) {
-	stmt, err := db.Prepare("delete from `user` where id=?")
+func DeleteFromDB(user entity.USER) int {
+	//获取连接
+	opend, db := OpenDB()
+	if opend {
+		log.Println("open success")
+	} else {
+		log.Println("open faile:")
+	}
+	stmt, err := db.Prepare("delete from user where id=?")
 	checkErr(err)
-	res, err := stmt.Exec(autid)
+	res, err := stmt.Exec(user.Id)
+	checkErr(err)
 	affect, err := res.RowsAffected()
 	log.Println("删除数据：", affect)
+	checkErr(err)
+	return user.Id
 }
