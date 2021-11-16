@@ -10,9 +10,9 @@ import (
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method == "GET"{
+	if r.Method == "GET" {
 		fmt.Fprintf(w, "Hello test!")
-	}else{
+	} else {
 		fmt.Fprintf(w, "Only support get")
 	}
 
@@ -24,7 +24,10 @@ func main() {
 	//用户
 	http.HandleFunc("/user/add", web.AddUser)
 	http.HandleFunc("/user/detail", web.DetailUser)
-
+	// 监听配置
+	http.HandleFunc("/monitorconfig/add", web.AddMonConfig)
+	http.HandleFunc("/monitorconfig/detail", web.DetailMonConfig)
+	http.HandleFunc("/monitorconfig/updateStatus", web.UpdateStatusMonConfig)
 	//交易信息
 	http.HandleFunc("/tx/detail", web.DetailTxMsg)
 
