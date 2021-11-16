@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"monitoraddr/dao"
 	"monitoraddr/entity"
 	"net/http"
 	"strconv"
@@ -25,7 +26,7 @@ func AddMonConfig(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println("json format error:", err)
 		} else {
-			var id = AddMonConfigDb(monConfig)
+			var id = dao.AddMonConfigDb(monConfig)
 			if id > 0 {
 				fmt.Fprintf(w, "insert sucess id= "+strconv.FormatInt(id, 10))
 			} else {
@@ -49,7 +50,7 @@ func DetailMonConfig(w http.ResponseWriter, r *http.Request) {
 			//有没有比return更好的方式
 			return
 		}
-		var monConfig entity.MONConfig = DetailMonConfigDb(id[0])
+		var monConfig entity.MONConfig = dao.DetailMonConfigDb(id[0])
 		s, err := json.Marshal(monConfig)
 		if err != nil {
 			fmt.Fprintf(w, "Read failed:"+err.Error())
@@ -77,7 +78,7 @@ func UpdateStatusMonConfig(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println("json format error:", err)
 		} else {
-			var id = UpdateStatusMonConfigDB(monConfig)
+			var id = dao.UpdateStatusMonConfigDB(monConfig)
 			if id > 0 {
 				fmt.Fprintf(w, "update sucess id= "+strconv.FormatInt(id, 10))
 			} else {

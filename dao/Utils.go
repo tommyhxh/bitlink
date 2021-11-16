@@ -1,4 +1,4 @@
-package web
+package dao
 
 import (
 	"bytes"
@@ -15,7 +15,6 @@ import (
 	"time"
 )
 
-
 const (
 	db_driver = "root:123456@tcp(10.10.10.201:3306)/monitor?charset=utf8"
 )
@@ -31,7 +30,6 @@ func OpenDB() (success bool, db *sql.DB) {
 	checkErr(err)
 	return isOpen, db
 }
-
 
 func GetTime() string {
 	const shortForm = "2006-01-02 15:04:05"

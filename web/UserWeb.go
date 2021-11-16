@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"monitoraddr/dao"
 	"monitoraddr/entity"
 	"net/http"
 	"strconv"
@@ -23,9 +24,9 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println("json format error:", err)
 		} else {
-			var id = addUserDb(user)
+			var id = dao.AddUserDb(user)
 			if id > 0 {
-				fmt.Fprintf(w, "insert sucess id= " + strconv.FormatInt(id, 10))
+				fmt.Fprintf(w, "insert sucess id= "+strconv.FormatInt(id, 10))
 			} else {
 				fmt.Fprintf(w, "insert error id= "+string(b))
 			}
@@ -51,7 +52,7 @@ func DetailUser(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Fprintf(w, "Read failed:"+err.Error())
 		}
-		w.Header().Set("content-type","text/json")
+		w.Header().Set("content-type", "text/json")
 		fmt.Fprintf(w, string(s))
 	} else {
 		log.Println("ONly support Post")

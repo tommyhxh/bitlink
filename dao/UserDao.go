@@ -1,13 +1,12 @@
-package web
+package dao
 
 import (
 	"database/sql"
 	"log"
-	 "monitoraddr/entity"
+	"monitoraddr/entity"
 )
 
-
-func addUserDb(user entity.USER) int64 {
+func AddUserDb(user entity.USER) int64 {
 	//获取数据库连接
 	opend, db := OpenDB()
 	if opend {
@@ -32,7 +31,7 @@ func addUserDb(user entity.USER) int64 {
 	return id
 }
 
-func  DetailUserDb( id string) entity.USER {
+func DetailUserDb(id string) entity.USER {
 	//获取连接
 	opend, db := OpenDB()
 	if opend {
@@ -41,7 +40,7 @@ func  DetailUserDb( id string) entity.USER {
 		log.Println("open faile:")
 	}
 	//查询
-	rows, err := db.Query("SELECT * FROM user where id =? ",id)
+	rows, err := db.Query("SELECT * FROM user where id =? ", id)
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
@@ -69,7 +68,7 @@ func QueryFromDB(db *sql.DB) {
 		var pwd string
 		checkErr(err)
 		err = rows.Scan(&id, &name, &code, &pwd)
-		log.Println(id+name+code+pwd)
+		log.Println(id + name + code + pwd)
 	}
 }
 
