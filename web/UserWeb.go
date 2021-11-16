@@ -47,7 +47,7 @@ func DetailUser(w http.ResponseWriter, r *http.Request) {
 			//有没有比return更好的方式
 			return
 		}
-		var user entity.USER = DetailUserDb(id[0])
+		var user entity.USER = dao.DetailUserDb(id[0])
 		s, err := json.Marshal(user)
 		if err != nil {
 			fmt.Fprintf(w, "Read failed:"+err.Error())
