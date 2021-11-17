@@ -15,10 +15,15 @@ func AddUserDb(user entity.USER) int64 {
 	//	log.Println("open faile:")
 	//}
 	//定义查询语句
+	tx, err := DB.Begin()
+	checkErr(err)
 	stmt, err := DB.Prepare("insert `user` set `name`=?,code=?,pwd=?")
 	checkErr(err)
 	//执行sql
 	res, err := stmt.Exec(user.Name, user.Code, user.Pwd)
+	if err == nil {
+		tx.Commit()
+	}
 	checkErr(err)
 	//获取当前插入记录的id
 	id, err := res.LastInsertId()
@@ -111,9 +116,14 @@ func UpdateDB(user entity.USER) int64 {
 	//} else {
 	//	log.Println("open faile:")
 	//}
+	tx, err := DB.Begin()
+	checkErr(err)
 	stmt, err := DB.Prepare("update user set name=?,code=? where id=?")
 	checkErr(err)
 	res, err := stmt.Exec(user.Name, user.Code, user.Id)
+	if err == nil {
+		tx.Commit()
+	}
 	checkErr(err)
 	affect, err := res.RowsAffected()
 	//获取当前插入记录的id
@@ -131,9 +141,15 @@ func DeleteFromDB(user entity.USER) int {
 	//} else {
 	//	log.Println("open faile:")
 	//}
+	//开启事务
+	tx, err := DB.Begin()
+	checkErr(err)
 	stmt, err := DB.Prepare("delete from user where id=?")
 	checkErr(err)
 	res, err := stmt.Exec(user.Id)
+	if err == nil {
+		tx.Commit()
+	}
 	checkErr(err)
 	affect, err := res.RowsAffected()
 	log.Println("删除数据：", affect)
