@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"monitoraddr/dao"
 	"monitoraddr/eth"
 	"monitoraddr/web"
 	"net/http"
@@ -19,6 +20,8 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	//初始化数据库
+	dao.InitDB()
 	//eth的一个服务
 	eth.Eth()
 	//用户
@@ -39,4 +42,6 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+
+	defer dao.CloseDB()
 }

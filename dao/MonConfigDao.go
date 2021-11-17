@@ -7,13 +7,13 @@ import (
 
 func AddMonConfigDb(monConfig entity.MONConfig) int64 {
 	// 获取数据库连接
-	opend, db := OpenDB()
-	if opend {
-		log.Println("open success")
-	} else {
-		log.Println("open faile:")
-	}
-	stmt, err := db.Prepare("insert mon_config set addr=?,status=?,user_id=?,start_block_number=?")
+	//opend, db := OpenDB()
+	//if opend {
+	//	log.Println("open success")
+	//} else {
+	//	log.Println("open faile:")
+	//}
+	stmt, err := DB.Prepare("insert mon_config set addr=?,status=?,user_id=?,start_block_number=?")
 	checkErr(err)
 
 	res, err := stmt.Exec(monConfig.Addr, monConfig.Status, monConfig.UserId, monConfig.StartBlockNumber)
@@ -30,16 +30,16 @@ func AddMonConfigDb(monConfig entity.MONConfig) int64 {
 
 func DetailMonConfigDb(id string) entity.MONConfig {
 	//获取连接
-	opend, db := OpenDB()
-	if opend {
-		log.Println("open success detail")
-	} else {
-		log.Println("open faile:")
-	}
+	//opend, db := OpenDB()
+	//if opend {
+	//	log.Println("open success detail")
+	//} else {
+	//	log.Println("open faile:")
+	//}
 	//查询
 	sql := "SELECT id,addr,status,user_id as userId,start_block_number as startBlockNumber," +
 		" cur_block_number as CurBlockNumber ,count, new_tx_count as NewTXCount FROM mon_config where id =? "
-	rows, err := db.Query(sql, id)
+	rows, err := DB.Query(sql, id)
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
@@ -57,13 +57,13 @@ func DetailMonConfigDb(id string) entity.MONConfig {
 
 func UpdateStatusMonConfigDB(monConfig entity.MONConfig) int64 {
 	//获取数据库连接
-	opend, db := OpenDB()
-	if opend {
-		log.Println("open success")
-	} else {
-		log.Println("open faile:")
-	}
-	stmt, err := db.Prepare("update mon_config set status=? where id=?")
+	//opend, db := OpenDB()
+	//if opend {
+	//	log.Println("open success")
+	//} else {
+	//	log.Println("open faile:")
+	//}
+	stmt, err := DB.Prepare("update mon_config set status=? where id=?")
 	checkErr(err)
 	res, err := stmt.Exec(monConfig.Status, monConfig.Id)
 	checkErr(err)
