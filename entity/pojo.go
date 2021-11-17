@@ -7,6 +7,13 @@ type USER struct {
 	Pwd  string `json:"pwd"`
 }
 
+//定义列表返回值
+type UserList struct {
+	Data   []USER `json:"data"`
+	Total  int    `json:"total"`
+	Status bool   `json:"status"`
+}
+
 type MONConfig struct {
 	Id               int    `json:"id"`
 	Addr             string `json:"addr"`

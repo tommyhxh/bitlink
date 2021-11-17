@@ -64,14 +64,15 @@ func DetailUser(w http.ResponseWriter, r *http.Request) {
 func QueryFrom(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		err := r.ParseForm()
-		id, found1 := r.Form["id"]
-		if !found1 {
-			fmt.Fprintf(w, "id 参数缺少")
+		pageNo, found1 := r.Form["pageNo"]
+		pageSize, found2 := r.Form["pageSize"]
+		if !found1 || !found2 {
+			fmt.Fprintf(w, "pageNo或者pageSize 参数缺少")
 			//有没有比return更好的方式
 			return
 		}
-		var user entity.USER = dao.QueryFromDB(id[0])
-		s, err := json.Marshal(user)
+		var userlist entity.UserList = dao.QueryFromDB(pageNo[0], pageSize[0])
+		s, err := json.Marshal(userlist)
 		if err != nil {
 			fmt.Fprintf(w, "Read failed:"+err.Error())
 		}

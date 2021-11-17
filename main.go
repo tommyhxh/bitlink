@@ -24,7 +24,7 @@ func main() {
 	//用户
 	http.HandleFunc("/user/add", web.AddUser)
 	http.HandleFunc("/user/detail", web.DetailUser)
-	http.HandleFunc("/user/query", web.QueryFrom)
+	http.HandleFunc("/user/list", web.QueryFrom)
 	http.HandleFunc("/user/update", web.UpdateForm)
 	http.HandleFunc("/user/delete", web.DeleteFrom)
 	// 监听配置

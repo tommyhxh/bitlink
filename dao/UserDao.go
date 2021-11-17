@@ -3,6 +3,7 @@ package dao
 import (
 	"log"
 	"monitoraddr/entity"
+	"strconv"
 )
 
 func AddUserDb(user entity.USER) int64 {
@@ -53,32 +54,53 @@ func DetailUserDb(id string) entity.USER {
 	return user
 }
 
-func QueryFromDB(id string) entity.USER {
+func QueryFromDB(pageNo string, pageSize string) entity.UserList {
 	opend, db := OpenDB()
 	if opend {
 		log.Println("open success")
 	} else {
 		log.Println("open faile:")
 	}
-	rows, err := db.Query("SELECT * FROM user where id=?", id)
+	//初始化返回值
+	userlist := entity.UserList{
+		Total:  0,
+		Status: true,
+		Data:   make([]entity.USER, 0),
+	}
+	no, err := strconv.Atoi(pageNo)
+	if err != nil {
+		log.Println("error:", err)
+		no = 1
+	}
+	size, err := strconv.Atoi(pageSize)
+	if err != nil {
+		log.Println("error:", err)
+		size = 10
+	}
+	//查询总记录数
+	rowCount, err := db.Query("SELECT count(*) FROM `user`")
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
-	} else {
 	}
-	var user entity.USER
-	for rows.Next() {
-		// var id string
-		// var name string
-		// var code string
-		// var pwd string
-		// checkErr(err)
-		// err = rows.Scan(&id, &name, &code, &pwd)
-		// log.Println(id + name + code + pwd)
+	for rowCount.Next() {
 		checkErr(err)
-		err = rows.Scan(&user.Id, &user.Name, &user.Code, &user.Pwd)
+		err = rowCount.Scan(&userlist.Total)
 	}
-	return user
+	//查询记录详情
+	rows, err := db.Query("SELECT * FROM user limit ?,?", no-1, size)
+	checkErr(err)
+	if err != nil {
+		log.Println("error:", err)
+	}
+	//遍历结果写到返回值
+	for rows.Next() {
+		checkErr(err)
+		var user entity.USER
+		err = rows.Scan(&user.Id, &user.Name, &user.Code, &user.Pwd)
+		userlist.Data = append(userlist.Data, user)
+	}
+	return userlist
 }
 
 func UpdateDB(user entity.USER) int64 {
