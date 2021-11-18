@@ -75,6 +75,7 @@ func UpdateStatusMonConfigDB(monConfig entity.MONConfig) int64 {
 	return id
 }
 func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
+	//数据库连接
 	opend, db := OpenDB()
 	if opend {
 		log.Println("open success")
