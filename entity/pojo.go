@@ -25,5 +25,11 @@ type MONConfig struct {
 	NewTXCount       string `json:"new_tx_count"`
 }
 
+type MonConfigList struct {
+	Data   []MONConfig `json:"data"`
+	Total  int         `json:"total"`
+	Status bool        `json:"status"`
+}
+
 type TxMsg struct {
 }
