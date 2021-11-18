@@ -34,6 +34,7 @@ func main() {
 	http.HandleFunc("/monitorconfig/add", web.AddMonConfig)
 	http.HandleFunc("/monitorconfig/detail", web.DetailMonConfig)
 	http.HandleFunc("/monitorconfig/updateStatus", web.UpdateStatusMonConfig)
+	http.HandleFunc("/monitorconfig/list", web.MonConfigList)
 	//交易信息
 	http.HandleFunc("/tx/detail", web.DetailTxMsg)
 
