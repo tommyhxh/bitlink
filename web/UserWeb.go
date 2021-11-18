@@ -12,6 +12,7 @@ import (
 )
 
 func AddUser(w http.ResponseWriter, r *http.Request) {
+	CrossOriginCore(w, r)
 	if r.Method == "POST" {
 		b, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -38,6 +39,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func DetailUser(w http.ResponseWriter, r *http.Request) {
+	CrossOriginCore(w, r)
 	if r.Method == "GET" {
 		err := r.ParseForm()
 		//输入id1 错误为什么报错
@@ -62,6 +64,7 @@ func DetailUser(w http.ResponseWriter, r *http.Request) {
 
 // 查询
 func QueryFrom(w http.ResponseWriter, r *http.Request) {
+	CrossOriginCore(w, r)
 	if r.Method == "GET" {
 		err := r.ParseForm()
 		pageNo, found1 := r.Form["pageNo"]
@@ -86,6 +89,7 @@ func QueryFrom(w http.ResponseWriter, r *http.Request) {
 
 // 更新
 func UpdateForm(w http.ResponseWriter, r *http.Request) {
+	CrossOriginCore(w, r)
 	if r.Method == "POST" {
 		// 解析body数据
 		b, err := ioutil.ReadAll(r.Body)
@@ -114,6 +118,7 @@ func UpdateForm(w http.ResponseWriter, r *http.Request) {
 
 // 删除
 func DeleteFrom(w http.ResponseWriter, r *http.Request) {
+	CrossOriginCore(w, r)
 	if r.Method == "POST" {
 		// 解析body数据
 		b, err := ioutil.ReadAll(r.Body)

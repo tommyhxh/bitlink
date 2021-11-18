@@ -13,6 +13,7 @@ import (
 
 // 增加
 func AddMonConfig(w http.ResponseWriter, r *http.Request) {
+	CrossOriginCore(w, r)
 	if r.Method == "POST" {
 		// 解析body数据
 		b, err := ioutil.ReadAll(r.Body)
@@ -41,6 +42,7 @@ func AddMonConfig(w http.ResponseWriter, r *http.Request) {
 
 // 详情
 func DetailMonConfig(w http.ResponseWriter, r *http.Request) {
+	CrossOriginCore(w, r)
 	if r.Method == "GET" {
 		err := r.ParseForm()
 		//输入id1 错误为什么报错
@@ -65,6 +67,7 @@ func DetailMonConfig(w http.ResponseWriter, r *http.Request) {
 
 // 更新
 func UpdateStatusMonConfig(w http.ResponseWriter, r *http.Request) {
+	CrossOriginCore(w, r)
 	if r.Method == "POST" {
 		// 解析body数据
 		b, err := ioutil.ReadAll(r.Body)
