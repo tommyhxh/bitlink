@@ -93,3 +93,26 @@ func UpdateStatusMonConfig(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Only support post")
 	}
 }
+
+func MonConfigList(w http.ResponseWriter, r *http.Request) {
+	CrossOriginCore(w, r)
+	if r.Method == "GET" {
+		err := r.ParseForm()
+		pageNo, found1 := r.Form["pageNo"]
+		pageSize, found2 := r.Form["pageSize"]
+		if !found1 || !found2 {
+			fmt.Fprintf(w, "pageNo或者pageSize 参数缺少")
+			return
+		}
+		var monConfigList entity.MonConfigList = dao.MonConfigListDb(pageNo[0], pageSize[0])
+		s, err := json.Marshal(monConfigList)
+		if err != nil {
+			fmt.Fprintf(w, "Read failed:"+err.Error())
+		}
+		w.Header().Set("content-type", "text/json")
+		fmt.Fprintf(w, string(s))
+	} else {
+		log.Println("Only support GET")
+		fmt.Fprintf(w, "Only support GET")
+	}
+}
