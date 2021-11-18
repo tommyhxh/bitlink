@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/ethereum/go-ethereum/common"
 	"log"
 	"monitoraddr/dao"
 	"monitoraddr/eth"
@@ -23,13 +24,20 @@ func main() {
 	//初始化数据库
 	dao.InitDB()
 	//eth的一个服务
-	eth.Eth()
+	eth.InitEthClient()
+	addrs := []common.Address{common.HexToAddress("0x234D060Be1E7e078eDf0D3c9bD0b77b8266a4245")}
+	var i uint64
+	for i = 0; i <= 626566; i++ {
+		eth.GetTransaction(i, addrs)
+	}
+
 	//用户
 	http.HandleFunc("/user/add", web.AddUser)
 	http.HandleFunc("/user/detail", web.DetailUser)
 	http.HandleFunc("/user/list", web.QueryFrom)
 	http.HandleFunc("/user/update", web.UpdateForm)
 	http.HandleFunc("/user/delete", web.DeleteFrom)
+	http.HandleFunc("/route/list", web.QueryFrom)
 	// 监听配置
 	http.HandleFunc("/monitorconfig/add", web.AddMonConfig)
 	http.HandleFunc("/monitorconfig/detail", web.DetailMonConfig)
