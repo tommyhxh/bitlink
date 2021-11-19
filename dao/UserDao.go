@@ -8,17 +8,22 @@ import (
 
 func AddUserDb(user entity.USER) int64 {
 	//获取数据库连接
-	opend, db := OpenDB()
-	if opend {
-		log.Println("open success")
-	} else {
-		log.Println("open faile:")
-	}
+	//opend, db := OpenDB()
+	//if opend {
+	//	log.Println("open success")
+	//} else {
+	//	log.Println("open faile:")
+	//}
 	//定义查询语句
-	stmt, err := db.Prepare("insert `user` set `name`=?,code=?,pwd=?")
+	tx, err := DB.Begin()
+	checkErr(err)
+	stmt, err := DB.Prepare("insert `user` set `name`=?,code=?,pwd=?")
 	checkErr(err)
 	//执行sql
 	res, err := stmt.Exec(user.Name, user.Code, user.Pwd)
+	if err == nil {
+		tx.Commit()
+	}
 	checkErr(err)
 	//获取当前插入记录的id
 	id, err := res.LastInsertId()
@@ -33,14 +38,14 @@ func AddUserDb(user entity.USER) int64 {
 
 func DetailUserDb(id string) entity.USER {
 	//获取连接
-	opend, db := OpenDB()
-	if opend {
-		log.Println("open success")
-	} else {
-		log.Println("open faile:")
-	}
+	//opend, db := OpenDB()
+	//if opend {
+	//	log.Println("open success")
+	//} else {
+	//	log.Println("open faile:")
+	//}
 	//查询
-	rows, err := db.Query("SELECT * FROM user where id =? ", id)
+	rows, err := DB.Query("SELECT * FROM user where id =? ", id)
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
@@ -55,12 +60,12 @@ func DetailUserDb(id string) entity.USER {
 }
 
 func QueryFromDB(pageNo string, pageSize string) entity.UserList {
-	opend, db := OpenDB()
-	if opend {
-		log.Println("open success")
-	} else {
-		log.Println("open faile:")
-	}
+	//opend, db := OpenDB()
+	//if opend {
+	//	log.Println("open success")
+	//} else {
+	//	log.Println("open faile:")
+	//}
 	//初始化返回值
 	userlist := entity.UserList{
 		Total:  0,
@@ -78,7 +83,7 @@ func QueryFromDB(pageNo string, pageSize string) entity.UserList {
 		size = 10
 	}
 	//查询总记录数
-	rowCount, err := db.Query("SELECT count(*) FROM `user`")
+	rowCount, err := DB.Query("SELECT count(*) FROM `user`")
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
@@ -88,7 +93,7 @@ func QueryFromDB(pageNo string, pageSize string) entity.UserList {
 		err = rowCount.Scan(&userlist.Total)
 	}
 	//查询记录详情
-	rows, err := db.Query("SELECT * FROM user limit ?,?", no-1, size)
+	rows, err := DB.Query("SELECT * FROM user limit ?,?", no-1, size)
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
@@ -105,15 +110,20 @@ func QueryFromDB(pageNo string, pageSize string) entity.UserList {
 
 func UpdateDB(user entity.USER) int64 {
 	//获取数据库连接
-	opend, db := OpenDB()
-	if opend {
-		log.Println("open success")
-	} else {
-		log.Println("open faile:")
-	}
-	stmt, err := db.Prepare("update user set name=?,code=? where id=?")
+	//opend, db := OpenDB()
+	//if opend {
+	//	log.Println("open success")
+	//} else {
+	//	log.Println("open faile:")
+	//}
+	tx, err := DB.Begin()
+	checkErr(err)
+	stmt, err := DB.Prepare("update user set name=?,code=? where id=?")
 	checkErr(err)
 	res, err := stmt.Exec(user.Name, user.Code, user.Id)
+	if err == nil {
+		tx.Commit()
+	}
 	checkErr(err)
 	affect, err := res.RowsAffected()
 	//获取当前插入记录的id
@@ -125,15 +135,21 @@ func UpdateDB(user entity.USER) int64 {
 
 func DeleteFromDB(user entity.USER) int {
 	//获取连接
-	opend, db := OpenDB()
-	if opend {
-		log.Println("open success")
-	} else {
-		log.Println("open faile:")
-	}
-	stmt, err := db.Prepare("delete from user where id=?")
+	//opend, db := OpenDB()
+	//if opend {
+	//	log.Println("open success")
+	//} else {
+	//	log.Println("open faile:")
+	//}
+	//开启事务
+	tx, err := DB.Begin()
+	checkErr(err)
+	stmt, err := DB.Prepare("delete from user where id=?")
 	checkErr(err)
 	res, err := stmt.Exec(user.Id)
+	if err == nil {
+		tx.Commit()
+	}
 	checkErr(err)
 	affect, err := res.RowsAffected()
 	log.Println("删除数据：", affect)

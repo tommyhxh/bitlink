@@ -26,4 +26,14 @@ type MONConfig struct {
 }
 
 type TxMsg struct {
+	Id              int    `json:"id"`
+	MonitorConfigId int    `json:"monitor_config_id"`
+	Addr            string `json:"addr"`
+	FromTo          string `json:"from_to"`
+	Amount          int    `json:"amount"`
+	BlockHash       string `json:"block_hash"`
+	BlockNumber     int    `json:"block_number"`
+	Hash            string `json:"hash"`
+	TimeStamp       string `json:"time_stamp"`
+	Error           string `json:"error"`
 }

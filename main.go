@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"monitoraddr/dao"
 	"monitoraddr/eth"
 	"monitoraddr/web"
 	"net/http"
@@ -19,14 +20,18 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	//初始化数据库
+	dao.InitDB()
 	//eth的一个服务
-	eth.Eth()
+	eth.InitEthClient()
+
 	//用户
 	http.HandleFunc("/user/add", web.AddUser)
 	http.HandleFunc("/user/detail", web.DetailUser)
 	http.HandleFunc("/user/list", web.QueryFrom)
 	http.HandleFunc("/user/update", web.UpdateForm)
 	http.HandleFunc("/user/delete", web.DeleteFrom)
+	http.HandleFunc("/route/list", web.QueryFrom)
 	// 监听配置
 	http.HandleFunc("/monitorconfig/add", web.AddMonConfig)
 	http.HandleFunc("/monitorconfig/detail", web.DetailMonConfig)
@@ -39,4 +44,6 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+
+	defer dao.CloseDB()
 }
