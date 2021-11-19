@@ -74,3 +74,52 @@ func UpdateStatusMonConfigDB(monConfig entity.MONConfig) int64 {
 	checkErr(err)
 	return id
 }
+func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
+	//数据库连接
+	opend, db := OpenDB()
+	if opend {
+		log.Println("open success")
+	} else {
+		log.Println("open faile:")
+	}
+	//初始化返回值
+	monConfigList := entity.MonConfigList{
+		Total:  0,
+		Status: true,
+		Data:   make([]entity.MONConfig, 0),
+	}
+	no, err := strconv.Atoi(pageNo)
+	if err != nil {
+		log.Println("error:", err)
+		no = 1
+	}
+	size, err := strconv.Atoi(pageSize)
+	if err != nil {
+		log.Println("error:", err)
+		size = 10
+	}
+	//查询总记录数
+	rowCount, err := db.Query("SELECT count(*) FROM `mon_config`")
+	checkErr(err)
+	if err != nil {
+		log.Println("error:", err)
+	}
+	for rowCount.Next() {
+		checkErr(err)
+		err = rowCount.Scan(&monConfigList.Total)
+	}
+	//查询记录详情
+	rows, err := db.Query("SELECT * FROM mon_config limit ?,?", no-1, size)
+	checkErr(err)
+	if err != nil {
+		log.Println("error:", err)
+	}
+	//遍历结果写到返回值
+	for rows.Next() {
+		checkErr(err)
+		var monConfig entity.MONConfig
+		err = rows.Scan(&monConfig.Id, &monConfig.Addr, &monConfig.Status, &monConfig.UserId, &monConfig.StartBlockNumber, &monConfig.CurBlockNumber, &monConfig.Count, &monConfig.NewTXCount)
+		monConfigList.Data = append(monConfigList.Data, monConfig)
+	}
+	return monConfigList
+}
