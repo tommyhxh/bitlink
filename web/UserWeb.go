@@ -74,7 +74,7 @@ func QueryFrom(w http.ResponseWriter, r *http.Request) {
 			//有没有比return更好的方式
 			return
 		}
-		var userlist entity.UserList = dao.QueryFromDB(pageNo[0], pageSize[0])
+		var userlist = dao.QueryFromDB(pageNo[0], pageSize[0])
 		s, err := json.Marshal(userlist)
 		if err != nil {
 			fmt.Fprintf(w, "Read failed:"+err.Error())

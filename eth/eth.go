@@ -43,7 +43,7 @@ func logTran(tx *types.Transaction, msg types.Message, block *types.Block) {
 
 func GetTransaction(blockIdx uint64, addrs []common.Address) []entity.TxMsg {
 	// 查询链的当前高度
-	var trans []entity.TxMsg
+	var trans = make([]entity.TxMsg, 0)
 	start := true
 	for start {
 		//通过区块高度获取块信息
@@ -56,14 +56,14 @@ func GetTransaction(blockIdx uint64, addrs []common.Address) []entity.TxMsg {
 		} else {
 			for _, tx := range block.Body().Transactions {
 				msg, err := tx.AsMessage(types.NewEIP155Signer(tx.ChainId()), nil)
-				logTran(tx, msg, block)
+				//logTran(tx, msg, block)
 				if err != nil {
 					fmt.Println(err.Error())
 					return nil
 				}
 				for _, addr := range addrs {
 					if *tx.To() == addr {
-						logTran(tx, msg, block)
+						//logTran(tx, msg, block)
 						tra := entity.TxMsg{
 							Addr:        addr.Hash().Hex(),
 							FromTo:      "to",
@@ -71,9 +71,10 @@ func GetTransaction(blockIdx uint64, addrs []common.Address) []entity.TxMsg {
 							BlockHash:   block.Hash().Hex(),
 							BlockNumber: block.Number().Sign()}
 						trans = append(trans, tra)
+						continue
 					}
 					if msg.From() == addr {
-						logTran(tx, msg, block)
+						//logTran(tx, msg, block)
 						tra := entity.TxMsg{
 							Addr:        addr.Hash().Hex(),
 							FromTo:      "from",
