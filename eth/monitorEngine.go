@@ -3,48 +3,57 @@ package eth
 import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
+	"monitoraddr/dao"
 	"monitoraddr/entity"
 	"time"
 )
 
-type monitor struct {
-	addr          map[string]bool
-	status        bool
-	startBlockNum uint64
-	curBlockNum   uint64
+type Monitor struct {
+	Addr          map[common.Address]bool
+	Status        bool
+	StartBlockNum uint64
+	CurBlockNum   uint64
 }
 
-func (m monitor) initConfig(configs []entity.MONConfig) {
+func (m Monitor) InitConfig() {
+	configs := dao.QueryFromMonConfigDBAll()
 	for _, s := range configs {
-		m.addr[s.Addr] = true
+		m.Addr[common.HexToAddress(s)] = true
 	}
 }
 
-func (m monitor) addrChange(config entity.MONConfig) {
-	_, ok := m.addr[config.Addr]
-	if config.Status == "1" {
-		m.addr[config.Addr] = true
+func (m Monitor) AddrChange(config entity.MONConfig) {
+	addr := common.HexToAddress(config.Addr)
+	_, ok := m.Addr[addr]
+	if config.Status == 1 {
+		m.Addr[addr] = true
 	} else {
 		if ok {
-			m.addr[config.Addr] = false
+			m.Addr[addr] = false
 		}
 	}
 }
-func (m monitor) statusChange() {
-	m.status = !m.status
+func (m Monitor) StatusChange() {
+	m.Status = !m.Status
 }
 
-func (m monitor) exec() {
+func (m Monitor) Exec() {
 	for true {
 		time.Sleep(time.Second * 10)
-		if m.status {
-			//获取区块
+		if m.Status {
+			trans := GetTransaction(m.CurBlockNum, m.Addr)
+			for _, tran := range trans {
+				fmt.Println(tran.Addr)
+				fmt.Println(tran.FromTo)
+			}
 		}
 	}
 }
 
 func Test() {
-	addrs := []common.Address{common.HexToAddress("0x234D060Be1E7e078eDf0D3c9bD0b77b8266a4245")}
+
+	addrs := map[common.Address]bool{common.HexToAddress("0x234D060Be1E7e078eDf0D3c9bD0b77b8266a4245"): true}
+
 	var i uint64
 	for i = 626560; i <= 626566; i++ {
 		trans := GetTransaction(i, addrs)

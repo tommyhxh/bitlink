@@ -14,32 +14,38 @@ type UserList struct {
 	Status bool   `json:"status"`
 }
 
+//定义返回值
+type JsonResult struct {
+	Status bool   `json:"status"`
+	Msg    string `json:"msg"`
+}
+
 type MONConfig struct {
 	Id               int    `json:"id"`
 	Addr             string `json:"addr"`
-	Status           string `json:"status"`
-	UserId           string `json:"user_id"`
-	StartBlockNumber string `json:"start_block_number"`
-	CurBlockNumber   string `json:"cur_block_number"`
+	Status           int    `json:"status"`
+	UserId           string `json:"userId"`
+	StartBlockNumber string `json:"startBlockNumber"`
+	CurBlockNumber   string `json:"curBlockNumber"`
 	Count            string `json:"count"`
-	NewTXCount       string `json:"new_tx_count"`
+	NewTXCount       string `json:"newTXCount"`
 }
-
 type MonConfigList struct {
 	Data   []MONConfig `json:"data"`
 	Total  int         `json:"total"`
 	Status bool        `json:"status"`
+	Msg    string      `json:"msg"`
 }
 
 type TxMsg struct {
 	Id              int    `json:"id"`
-	MonitorConfigId int    `json:"monitor_config_id"`
+	MonitorConfigId int    `json:"monitorConfigId"`
 	Addr            string `json:"addr"`
-	FromTo          string `json:"from_to"`
+	FromTo          string `json:"fromTo"`
 	Amount          int    `json:"amount"`
-	BlockHash       string `json:"block_hash"`
-	BlockNumber     int    `json:"block_number"`
+	BlockHash       string `json:"blockHash"`
+	BlockNumber     int    `json:"blockNumber"`
 	Hash            string `json:"hash"`
-	TimeStamp       string `json:"time_stamp"`
+	TimeStamp       int    `json:"timeStamp"`
 	Error           string `json:"error"`
 }
