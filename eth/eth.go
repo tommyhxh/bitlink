@@ -110,6 +110,15 @@ func GetTransaction(blockIdx uint64, addrMap map[common.Address]bool) []entity.T
 	return trans
 }
 
+func GetHeight() {
+	// 查询链的当前高度
+	currentHeight, err := EthClient.BlockNumber(context.Background())
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println(currentHeight)
+}
 func Eth() {
 
 	// 引入第三方包，方法连接接口

@@ -117,7 +117,7 @@ func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
 
 func QueryFromMonConfigDBAll() []string {
 	//查询记录详情
-	rows, err := DB.Query("SELECT addr FROM mon_config status='1'")
+	rows, err := DB.Query("SELECT addr FROM mon_config where status='1'")
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)

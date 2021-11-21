@@ -5,7 +5,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"monitoraddr/dao"
 	"monitoraddr/entity"
-	"time"
 )
 
 type Monitor struct {
@@ -18,6 +17,7 @@ type Monitor struct {
 func (m Monitor) InitConfig() {
 	configs := dao.QueryFromMonConfigDBAll()
 	for _, s := range configs {
+		fmt.Println("addr" + s)
 		m.Addr[common.HexToAddress(s)] = true
 	}
 }
@@ -38,15 +38,18 @@ func (m Monitor) StatusChange() {
 }
 
 func (m Monitor) Exec() {
+	m.CurBlockNum = m.StartBlockNum
 	for true {
-		time.Sleep(time.Second * 10)
+		//time.Sleep(time.Second * 10)
 		if m.Status {
 			trans := GetTransaction(m.CurBlockNum, m.Addr)
 			for _, tran := range trans {
+				fmt.Println("交易存储数据库")
 				fmt.Println(tran.Addr)
 				fmt.Println(tran.FromTo)
 			}
 		}
+		m.CurBlockNum += 1
 	}
 }
 

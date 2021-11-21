@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/ethereum/go-ethereum/common"
 	"log"
 	"monitoraddr/dao"
 	"monitoraddr/eth"
@@ -24,7 +25,18 @@ func main() {
 	dao.InitDB()
 	//eth的一个服务
 	eth.InitEthClient()
+	monitor := eth.Monitor{
+		Addr:          make(map[common.Address]bool, 0),
+		Status:        true,
+		StartBlockNum: 689035,
+		CurBlockNum:   689035}
+	monitor.InitConfig()
 
+	go monitor.Exec()
+
+	eth.GetHeight()
+	// eth.Test()
+	//eth.Eth()
 	//用户
 	http.HandleFunc("/user/add", web.AddUser)
 	http.HandleFunc("/user/detail", web.DetailUser)
@@ -37,6 +49,7 @@ func main() {
 	http.HandleFunc("/monitorconfig/detail", web.DetailMonConfig)
 	http.HandleFunc("/monitorconfig/updateStatus", web.UpdateStatusMonConfig)
 	http.HandleFunc("/monitorconfig/list", web.MonConfigList)
+
 	//交易信息
 	http.HandleFunc("/tx/detail", web.DetailTxMsg)
 
