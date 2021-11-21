@@ -72,12 +72,6 @@ func UpdateStatusMonConfigDB(monConfig entity.MONConfig) entity.JsonResult {
 }
 
 func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
-	opend, db := OpenDB()
-	if opend {
-		log.Println("open success")
-	} else {
-		log.Println("open faile:")
-	}
 	//初始化返回值
 	monConfigList := entity.MonConfigList{
 		Total:  0,
@@ -96,7 +90,7 @@ func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
 		size = 10
 	}
 	//查询总记录数
-	rowCount, err := db.Query("SELECT count(*) FROM `mon_config`")
+	rowCount, err := DB.Query("SELECT count(*) FROM `mon_config`")
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
@@ -106,7 +100,7 @@ func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
 		err = rowCount.Scan(&monConfigList.Total)
 	}
 	//查询记录详情
-	rows, err := db.Query("SELECT * FROM mon_config limit ?,?", no-1, size)
+	rows, err := DB.Query("SELECT * FROM mon_config limit ?,?", no-1, size)
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
@@ -119,4 +113,21 @@ func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
 		monConfigList.Data = append(monConfigList.Data, monConfig)
 	}
 	return monConfigList
+}
+
+func QueryFromMonConfigDBAll() []string {
+	//查询记录详情
+	rows, err := DB.Query("SELECT addr FROM mon_config status='1'")
+	checkErr(err)
+	if err != nil {
+		log.Println("error:", err)
+	}
+	//遍历结果写到返回值
+	var addrs []string
+	for rows.Next() {
+		var addr string
+		err = rows.Scan(&addr)
+		addrs = append(addrs, addr)
+	}
+	return addrs
 }
