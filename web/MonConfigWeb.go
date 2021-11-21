@@ -8,7 +8,6 @@ import (
 	"monitoraddr/dao"
 	"monitoraddr/entity"
 	"net/http"
-	"strconv"
 )
 
 // 增加
@@ -22,17 +21,18 @@ func AddMonConfig(w http.ResponseWriter, r *http.Request) {
 		}
 		defer r.Body.Close()
 		var monConfig entity.MONConfig
-		// log.Println(string(b))pack
+		log.Println(string(b))
 		err = json.Unmarshal(b, &monConfig)
 		if err != nil {
 			log.Println("json format error:", err)
 		} else {
-			var id = dao.AddMonConfigDb(monConfig)
-			if id > 0 {
-				fmt.Fprintf(w, "insert sucess id= "+strconv.FormatInt(id, 10))
-			} else {
-				fmt.Fprintf(w, "insert error id= "+string(b))
+			jsonResult := dao.UpdateStatusMonConfigDB(monConfig)
+			s, err := json.Marshal(jsonResult)
+			if err != nil {
+				fmt.Fprintf(w, "Read failed:"+err.Error())
 			}
+			w.Header().Set("content-type", "text/json")
+			fmt.Fprintf(w, string(s))
 		}
 	} else {
 		log.Println("Only support Post")
@@ -81,12 +81,13 @@ func UpdateStatusMonConfig(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println("json format error:", err)
 		} else {
-			var id = dao.UpdateStatusMonConfigDB(monConfig)
-			if id > 0 {
-				fmt.Fprintf(w, "update sucess id= "+strconv.FormatInt(id, 10))
-			} else {
-				fmt.Fprintf(w, "update error id= "+string(b))
+			jsonResult := dao.UpdateStatusMonConfigDB(monConfig)
+			s, err := json.Marshal(jsonResult)
+			if err != nil {
+				fmt.Fprintf(w, "Read failed:"+err.Error())
 			}
+			w.Header().Set("content-type", "text/json")
+			fmt.Fprintf(w, string(s))
 		}
 	} else {
 		log.Println("Only support Post")
@@ -94,6 +95,7 @@ func UpdateStatusMonConfig(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// 查询
 func MonConfigList(w http.ResponseWriter, r *http.Request) {
 	CrossOriginCore(w, r)
 	if r.Method == "GET" {

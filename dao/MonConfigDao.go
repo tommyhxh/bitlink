@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func AddMonConfigDb(monConfig entity.MONConfig) int64 {
+func AddMonConfigDb(monConfig entity.MONConfig) entity.JsonResult {
 	// 获取数据库连接
 	//opend, db := OpenDB()
 	//if opend {
@@ -14,19 +14,15 @@ func AddMonConfigDb(monConfig entity.MONConfig) int64 {
 	//} else {
 	//	log.Println("open faile:")
 	//}
-	stmt, err := DB.Prepare("insert mon_config set addr=?,status=?,user_id=?,start_block_number=?")
-	checkErr(err)
-
-	res, err := stmt.Exec(monConfig.Addr, monConfig.Status, monConfig.UserId, monConfig.StartBlockNumber)
-	checkErr(err)
-	id, err := res.LastInsertId()
-	checkErr(err)
-	if err != nil {
-		log.Println("插入数据失败")
-	} else {
-		log.Println("插入数据成功：", id)
+	jsonResult1 := entity.JsonResult{
+		Status: true,
+		Msg:    "添加成功",
 	}
-	return id
+	stmt, err := DB.Prepare("insert mon_config set addr=?,status=?,user_id=?,start_block_number=?,cur_block_number=?,count=?,new_tx_count=?")
+	checkErrResult(err, &jsonResult1)
+	stmt.Exec(monConfig.Addr, monConfig.Status, monConfig.UserId, monConfig.StartBlockNumber, monConfig.CurBlockNumber, monConfig.Count, monConfig.NewTXCount)
+	checkErrResult(err, &jsonResult1)
+	return jsonResult1
 }
 
 func DetailMonConfigDb(id string) entity.MONConfig {
@@ -56,7 +52,7 @@ func DetailMonConfigDb(id string) entity.MONConfig {
 	return monConfig
 }
 
-func UpdateStatusMonConfigDB(monConfig entity.MONConfig) int64 {
+func UpdateStatusMonConfigDB(monConfig entity.MONConfig) entity.JsonResult {
 	//获取数据库连接
 	//opend, db := OpenDB()
 	//if opend {
@@ -64,41 +60,29 @@ func UpdateStatusMonConfigDB(monConfig entity.MONConfig) int64 {
 	//} else {
 	//	log.Println("open faile:")
 	//}
+	jsonResult := entity.JsonResult{
+		Status: true,
+		Msg:    "更新成功1",
+	}
 	stmt, err := DB.Prepare("update mon_config set status=? where id=?")
-	checkErr(err)
-	res, err := stmt.Exec(monConfig.Status, monConfig.Id)
-	checkErr(err)
-	affect, err := res.RowsAffected()
-	//获取当前插入记录的id
-	id, err := res.LastInsertId()
-	log.Println("更新数据：", affect)
-	checkErr(err)
-	return id
-}
-
-func QueryFromMonConfigDBAll() []string {
-	//查询记录详情
-	rows, err := DB.Query("SELECT addr FROM mon_config status='1'")
-	checkErr(err)
-	if err != nil {
-		log.Println("error:", err)
-	}
-	//遍历结果写到返回值
-	var addrs []string
-	for rows.Next() {
-		var addr string
-		err = rows.Scan(&addr)
-		addrs = append(addrs, addr)
-	}
-	return addrs
+	checkErrResult(err, &jsonResult)
+	stmt.Exec(monConfig.Status, monConfig.Id)
+	checkErrResult(err, &jsonResult)
+	return jsonResult
 }
 
 func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
-	//数据库连接
+	opend, db := OpenDB()
+	if opend {
+		log.Println("open success")
+	} else {
+		log.Println("open faile:")
+	}
 	//初始化返回值
 	monConfigList := entity.MonConfigList{
 		Total:  0,
 		Status: true,
+		Msg:    "成功获取列表",
 		Data:   make([]entity.MONConfig, 0),
 	}
 	no, err := strconv.Atoi(pageNo)
@@ -112,7 +96,7 @@ func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
 		size = 10
 	}
 	//查询总记录数
-	rowCount, err := DB.Query("SELECT count(*) FROM `mon_config`")
+	rowCount, err := db.Query("SELECT count(*) FROM `mon_config`")
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
@@ -122,7 +106,7 @@ func MonConfigListDb(pageNo string, pageSize string) entity.MonConfigList {
 		err = rowCount.Scan(&monConfigList.Total)
 	}
 	//查询记录详情
-	rows, err := DB.Query("SELECT * FROM mon_config limit ?,?", no-1, size)
+	rows, err := db.Query("SELECT * FROM mon_config limit ?,?", no-1, size)
 	checkErr(err)
 	if err != nil {
 		log.Println("error:", err)
