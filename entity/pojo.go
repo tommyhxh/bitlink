@@ -38,14 +38,14 @@ type MonConfigList struct {
 }
 
 type TxMsg struct {
-	Id              int `json:"id"`
-	MonitorConfigId int `json:"monitorConfigId"`
-	Addr            int `json:"addr"`
-	FromTo          int `json:"fromTo"`
-	Amount          int `json:"amount"`
-	BlockHash       int `json:"blockHash"`
-	BlockNumber     int `json:"blockNumber"`
-	Hash            int `json:"hash"`
-	TimeStamp       int `json:"timeStamp"`
-	Error           int `json:"error"`
+	Id              int    `json:"id"`
+	MonitorConfigId int    `json:"monitorConfigId"`
+	Addr            string `json:"addr"`
+	FromTo          string `json:"fromTo"`
+	Amount          int    `json:"amount"`
+	BlockHash       string `json:"blockHash"`
+	BlockNumber     int    `json:"blockNumber"`
+	Hash            string `json:"hash"`
+	TimeStamp       int    `json:"timeStamp"`
+	Error           string `json:"error"`
 }

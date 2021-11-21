@@ -11,6 +11,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"monitoraddr/entity"
 	"net/http"
 	"strconv"
 	"time"
@@ -78,6 +79,14 @@ func GetNowtimeMD5() string {
 
 func checkErr(errMasg error) {
 	if errMasg != nil {
+		log.Println(errMasg)
+		panic(errMasg)
+	}
+}
+func checkErrResult(errMasg error, jsonResult *entity.JsonResult) {
+	if errMasg != nil {
+		jsonResult.Status = false
+		jsonResult.Msg = errMasg.Error()
 		log.Println(errMasg)
 		panic(errMasg)
 	}

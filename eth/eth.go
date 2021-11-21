@@ -41,7 +41,13 @@ func logTran(tx *types.Transaction, msg types.Message, block *types.Block) {
 	fmt.Printf("AccessList():   %v \n", tx.AccessList())
 }
 
-func GetTransaction(blockIdx uint64, addrs []common.Address) []entity.TxMsg {
+func GetTransaction(blockIdx uint64, addrMap map[common.Address]bool) []entity.TxMsg {
+	var addrs []common.Address
+	for k, v := range addrMap {
+		if v {
+			addrs = append(addrs, k)
+		}
+	}
 	// 查询链的当前高度
 	var trans = make([]entity.TxMsg, 0)
 	start := true
